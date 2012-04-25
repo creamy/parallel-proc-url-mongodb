@@ -1,0 +1,14 @@
+tmo.c example 
+
+This simple example uses the MongoDB C Driver, pthreads and libcurl to fetch documents and insert into MongoDB. Parallel processing allows Documents to be retreived and stored simultaneously. 
+
+URLs are loaded into a global array urls[]. A pointer to the index of each URL is passed to fetch and callback functions.
+
+I have tried this sample code with up to 100 URLs, however the user should take care not to blow up their system with too many threads. 
+
+There is limited error handling in this simple example. There also appears to be a condition where certain characters, or perhaps document encoding, cause a segfault on insert. Checking into this.
+
+In a future example I will include code for parsing and manipulation of fetched data.
+
+Waitman Gobble
+San Jose, California USA
