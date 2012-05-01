@@ -27,7 +27,6 @@
 
 char *urls[MAXT];
 
-
 //callback function for cURL fetch return size to libcurl
 //userp contains url index
 
