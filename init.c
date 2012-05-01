@@ -23,9 +23,10 @@ int main ( void ) {
 				mongo_insert( conn, "argang.sources", b );
 				bson_destroy( b );
 			}
+			fclose ( file );
 
 		}
 	}
-	return 1;
+	return 0;
 }
 
