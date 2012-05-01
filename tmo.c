@@ -1,4 +1,3 @@
-
 //********************************************************************************
 //*** tmo.c example 
 //*** Waitman Gobble waitman@waitman.net
@@ -11,12 +10,7 @@
 //***
 //*** build 
 
-/*
-gcc --std=c99 -Wall \
-	/home/wgobble/software/mongodb-mongo-c-driver-68aa48e/src/*.c \
-	tmo.c -I/home/wgobble/software/mongodb-mongo-c-driver-68aa48e/src/ \
-	-I/usr/local/include -L/usr/local/lib -lcurl -lpthread -o tmo
-*/
+/*see build.sh for compile*/
 
 //********************************************************************************
 
@@ -31,8 +25,6 @@ gcc --std=c99 -Wall \
 #define MAXT 200
 #define MAX_BUF 65536
 
-char abuff[MAX_BUF+1];
-int  abuff_index;
 char *urls[MAXT];
 
 
@@ -43,16 +35,6 @@ size_t static w_callback( void *buffer, size_t size, size_t nmemb, void *userp )
 
 	int idx = ( intptr_t ) userp;
 	int segsize = size * nmemb;
-	if ( abuff_index + segsize > MAX_BUF ) {
-		*( int * ) userp = 1;
-		return 0;
-	}
-
-	//POSIX 2008 can use strndup instead if you want
-	
-	memcpy( (void *) &abuff[abuff_index], buffer, ( size_t ) segsize );
-	abuff_index += segsize;
-	abuff[abuff_index] = 0;
 
 	//might try shared connection, for now open and close each thread.
 	//note - have seen certain docs cause segfault on insert, looking into problem.
@@ -60,16 +42,19 @@ size_t static w_callback( void *buffer, size_t size, size_t nmemb, void *userp )
 	int status;
 	mongo conn[1];
 	status = mongo_connect( conn, "127.0.0.1", 27017 );
-	bson b[1];
-	bson_init( b );
-	bson_append_new_oid( b, "_id" );
-	bson_append_string( b, "url", urls[idx] );
-	bson_append_string( b, "content", abuff );
-	bson_finish( b );
-	mongo_insert( conn, "argang.fetched", b );
-	bson_destroy( b );
-	free ( b );
-
+	
+	if ( status != MONGO_OK ) {
+		//poof()
+	} else {
+		bson b[1];
+		bson_init( b );
+		bson_append_new_oid( b, "_id" );
+		bson_append_string( b, "url", urls[idx] );
+		bson_append_string( b, "content", buffer );
+		bson_finish( b );
+		mongo_insert( conn, "argang.fetched", b );
+		bson_destroy( b );
+	}
 	return segsize;
 	
 }
@@ -116,19 +101,22 @@ int main( int argc, char **argv ) {
 	curl_global_init( CURL_GLOBAL_ALL );
 	
 	status = mongo_connect( conn, "127.0.0.1", 27017 );
-	
-	mongo_cursor_init( cursor, conn, "argang.sources" );
-	while ( mongo_cursor_next( cursor ) == MONGO_OK ) {
-		if ( bson_find( iterator, mongo_cursor_bson( cursor ), "url" ) ) {
-			urls[i] = malloc( 512 * sizeof( char ) );
-			sprintf( urls[i], "%s", bson_iterator_string( iterator ) );
-			error = pthread_create( &tid[i], NULL, fetch_url,  ( void * ) ( intptr_t ) i );
-			if ( error != 0 ) {
-				fprintf( stderr, "Error on thread number %d, errno %d, url %s\n", i, error, urls[i] );
-			}
-			i++;
-		}
 
+	if ( status != MONGO_OK ) {
+		//poof()
+	} else {
+		mongo_cursor_init( cursor, conn, "argang.sources" );
+		while ( mongo_cursor_next( cursor ) == MONGO_OK ) {
+			if ( bson_find( iterator, mongo_cursor_bson( cursor ), "url" ) ) {
+				urls[i] = malloc( 512 * sizeof( char ) );
+				sprintf( urls[i], "%s", bson_iterator_string( iterator ) );
+				error = pthread_create( &tid[i], NULL, fetch_url,  ( void * ) ( intptr_t ) i );
+				if ( error != 0 ) {
+					fprintf( stderr, "Error on thread number %d, errno %d, url %s\n", i, error, urls[i] );
+				}
+				i++;
+			}
+		}
 	}
 	mongo_cursor_destroy( cursor );
 
@@ -138,4 +126,3 @@ int main( int argc, char **argv ) {
 	}
  
 }
-
