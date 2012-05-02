@@ -15,11 +15,20 @@ San Jose, California USA
 
 Update 2012-04-30
 
-remove free w/o malloc
-add status check block to avoid compiler warnings
-add build.sh to avoid compiler warnings about comments
-add script to insert test data
-remove abuff / memcopy and use buffer from curl callback
+1). remove free w/o malloc
+2). add status check block to avoid compiler warnings
+3). add build.sh to avoid compiler warnings about comments
+4). add script to insert test data
+5). remove abuff / memcopy and use buffer from curl callback
+
+Update 2012-05-01
+
+6). added curl error handling code
+7). added response header store
+8). added lastModifiedTime store
+9). added unique run id store
+10). initial libxml2 doc parsing code
+
 
 $ sh build-init.sh 
 $ ./init
@@ -30,13 +39,13 @@ connecting to: argang
 sources
 system.indexes
 > db.sources.find();
-{ "_id" : ObjectId("4f9f47834b12106200000000"), "url" : "http://www.guardian.co.uk/rss\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000001"), "url" : "http://rss.cnn.com/rss/cnn_topstories.rss\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000002"), "url" : "http://www.alertnet.org/thenews/rss/index.xml\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000003"), "url" : "http://rss.mnginteractive.com/live/sanjose/SanJose_1923271.xml\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000004"), "url" : "http://rssfeeds.usatoday.com/usatoday-NewsTopStories\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000005"), "url" : "http://feeds.sfgate.com/sfgate/rss/feeds/news\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000006"), "url" : "http://my.abcnews.go.com/rsspublic/fp_rss20.xml\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000007"), "url" : "http://feeds.cbsnews.com/CBSNewsMain\n" }
-{ "_id" : ObjectId("4f9f47834b12106200000008"), "url" : "http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml\n" }
+{ "_id" : ObjectId("4f9f47834b12106200000000"), "url" : "http://www.guardian.co.uk/rss" }
+{ "_id" : ObjectId("4f9f47834b12106200000001"), "url" : "http://rss.cnn.com/rss/cnn_topstories.rss" }
+{ "_id" : ObjectId("4f9f47834b12106200000002"), "url" : "http://www.alertnet.org/thenews/rss/index.xml" }
+{ "_id" : ObjectId("4f9f47834b12106200000003"), "url" : "http://rss.mnginteractive.com/live/sanjose/SanJose_1923271.xml" }
+{ "_id" : ObjectId("4f9f47834b12106200000004"), "url" : "http://rssfeeds.usatoday.com/usatoday-NewsTopStories" }
+{ "_id" : ObjectId("4f9f47834b12106200000005"), "url" : "http://feeds.sfgate.com/sfgate/rss/feeds/news" }
+{ "_id" : ObjectId("4f9f47834b12106200000006"), "url" : "http://my.abcnews.go.com/rsspublic/fp_rss20.xml" }
+{ "_id" : ObjectId("4f9f47834b12106200000007"), "url" : "http://feeds.cbsnews.com/CBSNewsMain" }
+{ "_id" : ObjectId("4f9f47834b12106200000008"), "url" : "http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml" }
 > 

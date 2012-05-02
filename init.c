@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "mongo.h"
 
 int main ( void ) {
@@ -15,6 +16,7 @@ int main ( void ) {
 		if ( file != NULL ) {
 			char line[512];
 			while ( fgets ( line, sizeof line, file ) !=  NULL ) {
+				strtok( line,"\n" ); //remove trailing newline
 				bson b[1];
 				bson_init( b );
 				bson_append_new_oid( b, "_id" );
@@ -23,10 +25,9 @@ int main ( void ) {
 				mongo_insert( conn, "argang.sources", b );
 				bson_destroy( b );
 			}
-			fclose ( file );
 
 		}
 	}
-	return 0;
+	return 1;
 }
 
